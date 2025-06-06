@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import ReactionButton from "./ReactionButton";
 
 export const ReactionType = {
     Like: "like",
@@ -8,6 +9,34 @@ export const ReactionType = {
 
 export type ReactionValue = (typeof ReactionType)[keyof typeof ReactionType];
 
+export type ButtonProps = {
+    name: ReactionValue;
+    text: string;
+    bgColor: string;
+    bgHoverColor: string;
+}
+
+const buttons: Array<ButtonProps> = [
+    {
+        name: ReactionType.Like,
+        text: "👍",
+        bgColor: 'bg-blue-500',
+        bgHoverColor: 'bg-blue-600',
+    },
+    {
+        name: ReactionType.Love,
+        text: "❤️",
+        bgColor: 'bg-pink-500',
+        bgHoverColor: 'bg-pink-600',
+    },
+    {
+        name: ReactionType.Funny,
+        text: "😂",
+        bgColor: 'bg-yellow-400',
+        bgHoverColor: 'bg-yellow-500',
+    }
+]
+
 const ReactionCounter: React.FC = () => {
     const [reactions, setReactions] = useState<Record<ReactionValue, number>>({
         [ReactionType.Like]: 0,
@@ -15,10 +44,13 @@ const ReactionCounter: React.FC = () => {
         [ReactionType.Funny]: 0,
     });
 
-    const popularReactionType = Object.keys(reactions).reduce((a, b) => (reactions[a as ReactionValue] > reactions[b as ReactionValue] ? a : b)) as ReactionValue;
+    const popularReactionType = useMemo(() => {
+        return Object.entries(reactions).reduce(
+            (a, b) => (b[1] > a[1] ? b : a)
+        )[0] as ReactionValue;
+    }, [reactions]);
 
-    const handleReactionClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        const reactionType = event.currentTarget.name as ReactionValue;
+    const handleReactionClick = (reactionType: ReactionValue) => {
         setReactions((prevReactions) => ({
             ...prevReactions,
             [reactionType]: prevReactions[reactionType] + 1,
@@ -29,16 +61,17 @@ const ReactionCounter: React.FC = () => {
         <div className="p-4 space-y-4 text-center">
             <h2 className="text-xl font-bold">リアクションを選んでね！</h2>
             <div className="flex justify-center space-x-4">
-                {/* handleReactionClick vs onReactionClick */}
-                <button name={ReactionType.Like} onClick={handleReactionClick} className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
-                    👍 {reactions[ReactionType.Like]}
-                </button>
-                <button name={ReactionType.Love} onClick={handleReactionClick} className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition">
-                    ❤️ {reactions[ReactionType.Love]}
-                </button>
-                <button name={ReactionType.Funny} onClick={handleReactionClick} className="px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 transition">
-                    😂 {reactions[ReactionType.Funny]}
-                </button>
+                {
+                    buttons.map(({ name, text, ...props }) => (
+                        <ReactionButton
+                            key={name}
+                            name={name}
+                            onClickReaction={handleReactionClick}
+                            text={`${text} ${reactions[name]}`}
+                            {...props}
+                        />
+                    ))
+                }
             </div>
 
             <div className="mt-4">
