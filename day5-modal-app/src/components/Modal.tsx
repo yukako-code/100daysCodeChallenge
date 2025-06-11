@@ -4,33 +4,36 @@ type ModalProps = {
     isOpen: boolean;
     onClose: () => void;
     children: React.ReactNode;
-    closeButtonRef: React.RefObject<HTMLButtonElement>;
+    initialFocusRef: React.RefObject<HTMLButtonElement | null>
 };
 
 //TODO: Escキー押下で onClose() を発火させる useEffect を追加する
 //TODO: createPortal を使ってモーダル内容を document.body に描画するようにする
-const Modal = ({ isOpen, onClose, children, closeButtonRef }: ModalProps) => {
+const Modal = ({ isOpen, onClose, children, initialFocusRef }: ModalProps) => {
 
-    const onESCClick = (e: KeyboardEvent) => {
-        if (e.key === "Escape") {
-            onClose();
-        }
-    }
     useEffect(() => {
-        document.addEventListener("keydown", onESCClick, false);
-    }, [])
+        const onESCClick = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                onClose(); // 最新の関数がここにくる
+            }
+        };
+        document.addEventListener("keydown", onESCClick);
+        return () => document.removeEventListener("keydown", onESCClick);
+    }, [onClose]);
+
 
     if (!isOpen) return null;
 
     return createPortal(
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" onClick={onClose}>
+        <div role="dialog"
+            aria-modal="true" className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" onClick={onClose}>
             <div
                 className="bg-white p-6 rounded-lg shadow-lg"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* TODO: コンテンツ部分 */}
                 {children}
-                <button ref={closeButtonRef} onClick={onClose} className="mt-4 text-sm text-gray-500">閉じる</button>
+                <button ref={initialFocusRef} onClick={onClose} className="mt-4 text-sm text-gray-500">閉じる</button>
             </div>
         </div>
         , document.body);

@@ -8,6 +8,7 @@ const App: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const [message, setMessage] = useState("初期メッセージ");
 
   const openModal = () => {
     // TODO: モーダル開く
@@ -15,7 +16,7 @@ const App: React.FC = () => {
   };
 
   const closeModal = () => {
-    // TODO: モーダル閉じる
+    alert(message);
     setIsOpen(false);
   };
 
@@ -32,8 +33,10 @@ const App: React.FC = () => {
       <button ref={triggerButtonRef} onClick={openModal} className="bg-blue-500 text-white px-4 py-2 rounded">
         モーダルを開く
       </button>
-      <Modal isOpen={isOpen} onClose={closeModal} closeButtonRef={closeButtonRef}>
-        <p>ここにモーダルの内容が入ります。</p>
+      <Modal isOpen={isOpen} onClose={closeModal} initialFocusRef={closeButtonRef}>
+        <button onClick={() => setMessage("更新されたメッセージ")}>
+          onCloseの内容を更新
+        </button>
       </Modal>
     </div>
   );
