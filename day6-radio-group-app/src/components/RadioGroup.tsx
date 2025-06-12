@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import type { RadioGroupOption } from '../constants/type';
 
 
-type IRadioGroupProps = {
+type RadioGroupProps = {
     options: RadioGroupOption[];
 };
 
-const RadioGroup: React.FC<IRadioGroupProps> = ({ options }) => {
-    const [selected, setSelected] = useState<string>('');
+const RadioGroup: React.FC<RadioGroupProps> = ({ options }) => {
+    const [selected, setSelected] = useState<string>(options[0]?.value ?? '');
+    const selectedOption = options.find(option => option.value === selected);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelected(e.target.value);
@@ -31,11 +32,9 @@ const RadioGroup: React.FC<IRadioGroupProps> = ({ options }) => {
                 ))}
             </div>
             <div className="mt-4">
-                {options.find(option => option.value === selected) && (
-                    <p className="text-blue-500">
-                        選択された値: {selected}
-                    </p>
-                )}
+                <p className="text-blue-500">
+                    選択された値: {selectedOption?.label}
+                </p>
             </div>
         </div>
     );
