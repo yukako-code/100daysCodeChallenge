@@ -2,8 +2,13 @@ import React from 'react';
 import useCalendar from '../hooks/useCalendar';
 import { weekNames } from '../constants';
 
-const Calendar: React.FC = () => {
-    const { year, month, days } = useCalendar();
+type Props = {
+    year: number;
+    month: number;
+};
+
+const Calendar: React.FC<Props> = ({ year, month }) => {
+    const { days } = useCalendar(year, month);
 
     return (
         <div className="p-4 max-w-md mx-auto">
@@ -15,8 +20,8 @@ const Calendar: React.FC = () => {
             </div>
             <div className="grid grid-cols-7 gap-2 mt-2">
                 {days.map((day, index) => (
-                    <div key={index} className={`p-2 rounded-lg ${day === 0 ? 'bg-gray-200' : 'bg-white'} ${day === new Date().getDate() && month === new Date().getMonth() + 1 ? 'border-2 border-blue-500' : ''}`}>
-                        {day !== 0 ? day : ''}
+                    <div key={index} className={`p-2 rounded-lg ${day === null ? 'bg-gray-200' : 'bg-white'} ${day === new Date().getDate() && month === new Date().getMonth() + 1 ? 'border-2 border-blue-500' : ''}`}>
+                        {day !== null ? day : ''}
                     </div>
                 ))}
             </div>
