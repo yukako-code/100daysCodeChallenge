@@ -1,17 +1,15 @@
-import { useState } from "react";
-import type { AccordionItemType } from "../type";
+import type { AccordionItemType } from "../types";
+interface AccordionItemProps extends AccordionItemType {
+    isOpen: boolean;
+    onClick: () => void;
+}
 
-const AccordionItem: React.FC<AccordionItemType> = ({ title, content }) => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const toggleAccordion = () => {
-        setIsOpen(prev => !prev);
-    };
-
+const AccordionItem: React.FC<AccordionItemProps> = ({ title, content, isOpen, onClick }) => {
     return (
         <div className="border-b border-gray-200">
             <button
-                onClick={toggleAccordion}
+                aria-expanded={isOpen}
+                onClick={onClick}
                 className="w-full text-left p-4 font-semibold hover:bg-gray-100"
             >
                 {title}

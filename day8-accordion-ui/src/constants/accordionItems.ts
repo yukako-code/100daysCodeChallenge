@@ -1,4 +1,4 @@
-import type { AccordionItemType } from "../type";
+import type { AccordionItemType } from "../types";
 
 export const accordionItems: AccordionItemType[] = [
     { title: "質問1", content: "答え1です。" },
