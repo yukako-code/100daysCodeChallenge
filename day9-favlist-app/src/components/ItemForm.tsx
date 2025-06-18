@@ -47,8 +47,10 @@ export const ItemForm = ({ onSubmit, updatingItem }: Props) => {
     useEffect(() => {
         if (updatingItem) {
             setItem(updatingItem);
+        } else {
+            setItem(initialForm);
         }
-    }, [updatingItem])
+    }, [updatingItem]);
     return (
         <form className="space-y-4 mb-4" onSubmit={handleSubmit}>
             <div>
@@ -58,6 +60,7 @@ export const ItemForm = ({ onSubmit, updatingItem }: Props) => {
                 <input
                     type="text"
                     name="title"
+                    id="title" // アクセシビリティ（a11y）強化 <label htmlFor="title"> → 対応する 
                     className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     placeholder="例：千と千尋の神隠し"
                     value={item.title}
@@ -73,6 +76,7 @@ export const ItemForm = ({ onSubmit, updatingItem }: Props) => {
                 <input
                     type="text"
                     name="category"
+                    id="category" // アクセシビリティ（a11y）強化 <label htmlFor="category"> → 対応する
                     className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     placeholder="例：映画 / 本 / カフェ"
                     value={item.category}
