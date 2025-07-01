@@ -1,0 +1,22 @@
+/* ProductList.tsx */
+h3,
+p {
+  margin: 0;
+}
+
+.m8 {
+  margin: 8px;
+}
+
+.product {
+  max-width: 300px;
+}
+
+.product-top {
+  display: flex;
+  justify-content: center;
+}
+
+.product img {
+  width: 100px;
+}
