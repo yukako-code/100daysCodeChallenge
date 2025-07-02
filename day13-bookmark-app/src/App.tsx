@@ -5,7 +5,7 @@ import BookmarkList from './components/BookmarkList';
 import { useBookmarks } from './hooks/useBookmarks';
 
 const App: React.FC = () => {
-  const { bookmarks, handleEdit, updatingBookmark, handleSubmit } = useBookmarks();
+  const { bookmarks, handleEdit, updatingBookmark, handleSubmit, handleDelete } = useBookmarks();
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-6 space-y-8">
@@ -27,7 +27,7 @@ const App: React.FC = () => {
           <BookmarkList
             bookmarks={bookmarks}
             onEdit={handleEdit}
-            onDelete={() => { /* TODO: 削除処理 */ }}
+            onDelete={handleDelete}
           />
         </section>
       </div>

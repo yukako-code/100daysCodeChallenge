@@ -34,8 +34,10 @@ const BookmarkForm: React.FC<BookmarkFormProps> = ({ onSubmit, updatingBookmark 
     useEffect(() => {
         if (updatingBookmark) {
             setForm(updatingBookmark);
+        } else {
+            setForm({});
         }
-    }, [updatingBookmark])
+    }, [updatingBookmark]);
     return (
         <form className="space-y-4" onSubmit={handleSubmit}>
             <input name='title' type="text" placeholder="タイトル" className="w-full p-2 border rounded" onChange={handleChange} value={form?.title ?? ''} />
