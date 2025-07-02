@@ -33,16 +33,9 @@ export const shoppingItemListReducers = (state: ShoppingItemListState, action: S
         case "UPDATE_SHOPPING_ITEM":
             return {
                 ...state,
-                shoppingItemList: [...state.shoppingItemList.map((item) => {
-                    // if item.id is equal to one of the existing shoppingItem, 
-                    if (item.id === action.payload.id) {
-                        return {
-                            ...item,
-                            title: action.payload.title
-                        }
-                    }
-                    return item
-                })],
+                shoppingItemList: state.shoppingItemList.map((item) =>
+                    item.id === action.payload.id ? { ...item, title: action.payload.title } : item
+                ),
                 updatingItem: undefined
             }
         case "UPDATE_UPDATING_SHOPPING_ITEM":

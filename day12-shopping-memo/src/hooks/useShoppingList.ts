@@ -4,12 +4,13 @@ import { shoppingItemListReducers, type ShoppingItemListState } from "../reducer
 
 type UseShoppingListReturn = {
     shoppingList: Array<ShoppingItem> //FIXME: any
-    handleList: (item: ShoppingItem) => void  //FIXME: any
+    handleSubmitItem: (item: ShoppingItem) => void  //FIXME: any
     handleEdit: (id: ShoppingItem['id']) => void
     handleDelete: (id: ShoppingItem['id']) => void
     updatingItem: ShoppingItem | undefined
 }
 
+// useReducerの初期値は別関数に切り出すとテストしやすい
 const init = (): ShoppingItemListState => {
     const storedList = localStorage.getItem('shoppingList');
     return {
@@ -20,7 +21,7 @@ const init = (): ShoppingItemListState => {
 export const useShoppingList = (): UseShoppingListReturn => {
     const [state, dispatch] = useReducer(shoppingItemListReducers, undefined, init)
 
-    const handleList = (item: ShoppingItem) => {
+    const handleSubmitItem = (item: ShoppingItem) => {
         if (state.updatingItem) {
             dispatch({ type: 'UPDATE_SHOPPING_ITEM', payload: item });
         } else {
@@ -42,7 +43,7 @@ export const useShoppingList = (): UseShoppingListReturn => {
     }, [state.shoppingItemList])
     return {
         shoppingList: state.shoppingItemList,
-        handleList,
+        handleSubmitItem,
         updatingItem: state.updatingItem,
         handleEdit,
         handleDelete

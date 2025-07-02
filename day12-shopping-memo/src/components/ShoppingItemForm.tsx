@@ -4,10 +4,10 @@ import type { ShoppingItem } from '../type';
 
 
 interface ShoppingItemFormProps {
-    handleList: (item: ShoppingItem) => void
+    handleSubmitItem: (item: ShoppingItem) => void
     updatingItem: ShoppingItem | undefined
 }
-const ShoppingItemForm = ({ handleList, updatingItem }: ShoppingItemFormProps) => {
+const ShoppingItemForm = ({ handleSubmitItem, updatingItem }: ShoppingItemFormProps) => {
     const [input, setInput] = useState<string>(() => updatingItem?.title ?? '');
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,18 +19,18 @@ const ShoppingItemForm = ({ handleList, updatingItem }: ShoppingItemFormProps) =
         e.preventDefault();
         const trimmedInput = input.trim();
         if (!trimmedInput) return;
-        handleList({
-            id: updatingItem ? updatingItem.id : `${Math.random()}`,
+        handleSubmitItem({
+            id: updatingItem ? updatingItem.id : `${crypto.randomUUID()}`,
             title: input
         });
         setInput(''); //Reset
     }
 
     useEffect(() => {
-        if (updatingItem) {
-            setInput(updatingItem.title)
+        if (updatingItem && updatingItem.title !== input) {
+            setInput(updatingItem.title);
         }
-    }, [updatingItem])
+    }, [updatingItem]);
     return (
         <form className="flex gap-2 mb-4" onSubmit={handleSubmit}>
             <input
