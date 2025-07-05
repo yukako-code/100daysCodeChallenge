@@ -3,9 +3,10 @@ import React from 'react';
 import BookmarkForm from './components/BookmarkForm';
 import BookmarkList from './components/BookmarkList';
 import { useBookmarks } from './hooks/useBookmarks';
+import SearchInput from './components/SearchInput';
 
 const App: React.FC = () => {
-  const { bookmarks, handleEdit, updatingBookmark, handleSubmit, handleDelete } = useBookmarks();
+  const { bookmarks, handleEdit, updatingBookmark, handleSubmit, handleDelete, handleSearchBookmark, searchTerm } = useBookmarks();
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-6 space-y-8">
@@ -22,6 +23,7 @@ const App: React.FC = () => {
           />
         </section>
 
+        <SearchInput searchTerm={searchTerm} handleSearchBookmark={handleSearchBookmark} />
         <section>
           <h2 className="text-lg font-semibold text-gray-700 mb-2">📂 保存済みブックマーク</h2>
           <BookmarkList

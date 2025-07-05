@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react"
+import { useEffect, useReducer } from "react"
 import type { Bookmark } from "../types/bookmarks"
+import { bookmarksReducers } from "../reducers/bookmarksReducers"
 
 type UseBookmarksReturnType = {
     bookmarks: Array<Bookmark>
@@ -7,32 +8,40 @@ type UseBookmarksReturnType = {
     handleSubmit: (bookmark: Bookmark) => void
     handleEdit: (bookmark: Bookmark) => void
     handleDelete: (id: string) => void
+    handleSearchBookmark: (input: string) => void
+    searchTerm: string
 }
 export const useBookmarks = (): UseBookmarksReturnType => {
-    const [bookmarks, setBookmarks] = useState<Array<Bookmark>>([]);
-    const [updatingBookmark, setUpdatingBookmark] = useState<Bookmark | undefined>(undefined);
+    const [state, dispatch] = useReducer(bookmarksReducers, {
+        updatingBookmark: undefined,
+        bookmarkList: [],
+        allBookmarkList: [],
+        searchTerm: ''
+    })
 
     const handleEdit = (bookmark: Bookmark) => {
-        setUpdatingBookmark(bookmark);
+        dispatch({ type: 'SET_EDITING_BOOKMARK', payload: bookmark });
     }
 
     const handleSubmit = (bookmark: Bookmark) => {
-        if (updatingBookmark) {
-            setBookmarks(bookmarks.map((item) => {
-                return item.id === bookmark.id ? { ...item, ...bookmark } : item
-            }))
-            setUpdatingBookmark(undefined);
+        if (state.updatingBookmark) {
+            dispatch({ type: 'EDIT_BOOKMARK', payload: bookmark });
+            dispatch({ type: 'SET_EDITING_BOOKMARK', payload: undefined });
             return;
         }
-        setBookmarks([...bookmarks, bookmark]);
+        dispatch({ type: 'ADD_BOOKMARK', payload: bookmark })
     }
 
     const handleDelete = (id: string) => {
-        setBookmarks(prev => prev.filter((b) => b.id !== id));
-        if (updatingBookmark?.id === id) {
-            setUpdatingBookmark(undefined);
+        dispatch({ type: 'DELETE_BOOKMARK', payload: id })
+        if (state.updatingBookmark?.id === id) {
+            dispatch({ type: 'SET_EDITING_BOOKMARK', payload: undefined });
         }
     };
+
+    const handleSearchBookmark = (searchInput: string) => {
+        dispatch({ type: 'SEARCH_BOOKMARK', payload: searchInput })
+    }
 
     useEffect(() => {
         const fetchArticles = async () => {
@@ -44,15 +53,17 @@ export const useBookmarks = (): UseBookmarksReturnType => {
                 url: item.url,
                 description: item.description || '',
             }));
-            setBookmarks(bookmarksFromApi);
+            dispatch({ type: 'FETCH_BOOKMARK_LIST', payload: bookmarksFromApi })
         };
         fetchArticles();
     }, []);
     return {
-        bookmarks,
-        updatingBookmark,
+        bookmarks: state.bookmarkList,
+        updatingBookmark: state.updatingBookmark,
         handleEdit,
         handleSubmit,
-        handleDelete
+        handleDelete,
+        handleSearchBookmark,
+        searchTerm: state.searchTerm,
     }
 }
