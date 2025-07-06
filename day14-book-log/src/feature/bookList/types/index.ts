@@ -17,6 +17,8 @@ export type Book = {
 export type BookListState = {
     bookList: Array<Book>,
     updatingBook: Book | undefined,
+    filter: 'all' | BookReadStatusType,
+    sort: 'title' | 'status'
 }
 
 export type BookListActionType =
@@ -28,3 +30,7 @@ export type BookListActionType =
     | { type: 'DELETE_BOOK', payload: Book['id'] }
     // Update one of the existing book
     | { type: 'UPDATE_BOOK_LIST', payload: Book }
+    // Update filter
+    | { type: 'UPDATE_FILTER', payload: BookListState['filter'] }
+    // Update sort
+    | { type: 'UPDATE_SORT', payload: BookListState['sort'] }

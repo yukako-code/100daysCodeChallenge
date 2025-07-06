@@ -27,6 +27,18 @@ export const bookListReducers = (state: BookListState, action: BookListActionTyp
                 bookList: state.bookList.map((book) => book.id === action.payload.id ? { ...book, ...action.payload } : book)
             }
 
+        case 'UPDATE_FILTER':
+            return {
+                ...state,
+                filter: action.payload
+            }
+
+        case 'UPDATE_SORT':
+            return {
+                ...state,
+                sort: action.payload
+            }
+
         default:
             return state;
     }
