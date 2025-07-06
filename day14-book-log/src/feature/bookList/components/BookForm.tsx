@@ -4,13 +4,12 @@ import { useBookFormHandler } from '../hooks';
 
 
 type BookFormProps = {
-    onSubmit: (book: Book) => void;
+    onSubmit: (book: Book, isEditing: boolean) => void;
     updatingBook: Book | undefined;
 }
 
 export const BookForm: React.FC<BookFormProps> = ({ onSubmit, updatingBook }) => {
     const { book, handleChange, handleSubmit } = useBookFormHandler(updatingBook, onSubmit);
-
     const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         handleSubmit();
@@ -18,7 +17,7 @@ export const BookForm: React.FC<BookFormProps> = ({ onSubmit, updatingBook }) =>
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        handleChange(name, value);
+        handleChange(name as keyof Book, value);
     }
 
     return (

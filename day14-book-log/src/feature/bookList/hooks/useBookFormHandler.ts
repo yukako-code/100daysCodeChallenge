@@ -10,33 +10,31 @@ const initialBook: Book = {
 type UseBookFormHandlerReturnType = {
     book: Book;
     handleSubmit: () => void;
-    handleChange: (name: string, value: string | BookReadStatusType) => void;
+    handleChange: <K extends keyof Book>(name: K, value: Book[K]) => void;
 }
-export const useBookFormHandler = (updatingBook: Book | undefined, onSubmit: (book: Book) => void): UseBookFormHandlerReturnType => {
-    const [book, setBook] = useState<Book>(updatingBook ?? initialBook);
+export const useBookFormHandler = (updatingBook: Book | undefined, onSubmit: (book: Book, isEditing: boolean) => void): UseBookFormHandlerReturnType => {
+    const [book, setBook] = useState<Book>(updatingBook ?? {
+        ...initialBook,
+        id: crypto.randomUUID()
+    });
 
     const handleSubmit = () => {
         if (!book.title || !book.author) {
             alert('タイトル and 著者名 is mandatory!!! ');
             return;
         }
-        onSubmit({
-            ...book,
-            id: crypto.randomUUID()
-        });
+        onSubmit(book, !!updatingBook);
         setBook({
-            id: '',
+            id: crypto.randomUUID(),
             title: '',
             author: '',
             status: BookReadStatusType.UNREAD
         }) //reset
     }
 
-    const handleChange = (name: string, value: string | BookReadStatusType) => {
-        setBook({
-            ...book,
-            [name]: value
-        })
+    // handleChange(name, value) は柔軟だが、型安全性が低い
+    const handleChange = <K extends keyof Book>(name: K, value: Book[K]) => {
+        setBook(prev => ({ ...prev, [name]: value }));
     }
 
     useEffect(() => {
