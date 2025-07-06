@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import type { Book, BookListState } from "../types"
 import { bookListReducers } from "../reducers/bookListReducers";
 import { bookListInit } from "../utilities";
@@ -28,6 +28,10 @@ export const useBookList = (): UseBookListReturnType => {
     const handleEdit = (book: Book) => {
         dispatch({ type: 'EDIT_BOOK', payload: book })
     }
+
+    useEffect(() => {
+        localStorage.setItem("bookList", JSON.stringify(state.bookList));
+    }, [state.bookList]);
     return {
         bookList: state.bookList,
         updatingBook: state.updatingBook,

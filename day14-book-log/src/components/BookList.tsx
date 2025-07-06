@@ -8,7 +8,7 @@ type BookItemProps = {
 }
 const BookItem: React.FC<BookItemProps> = ({ book, onEdit, onDelete }) => {
     return (
-        <li className="p-2 border rounded flex justify-between">
+        <li key={book.id} className="p-2 border rounded flex justify-between">
             <div>
                 <p className="font-bold">{book.title}</p>
                 <p className="text-sm">{book.author} - {book.status}</p>

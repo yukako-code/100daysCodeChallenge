@@ -7,7 +7,7 @@ type BookFormProps = {
 }
 
 const initialBook: Book = {
-    id: crypto.randomUUID(),
+    id: '',
     title: '',
     author: '',
     status: BookReadStatusType.UNREAD
@@ -24,9 +24,12 @@ export const BookForm: React.FC<BookFormProps> = ({ onSubmit, updatingBook }) =>
             alert('タイトル and 著者名 is mandatory!!! ');
             return;
         }
-        onSubmit(book);
+        onSubmit({
+            ...book,
+            id: crypto.randomUUID()
+        });
         setBook({
-            id: crypto.randomUUID(),
+            id: '',
             title: '',
             author: '',
             status: BookReadStatusType.UNREAD
