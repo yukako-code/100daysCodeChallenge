@@ -2,14 +2,14 @@ import TaskList from "./TaskList";
 import { useTasks } from "../hooks/useTasks";
 import { useState } from "react";
 /*TODO:
-    core: useReducer + カスタムフック分離、永続化(localStorage)
+    core: useReducer + カスタムフック分離、永続化(localStorage) Done!
     optional: タグ/フィルタ/並び替え付きToDo
     advanced: Two Sumで重複タスク検出
 
 */
 export default function TaskManager() {
     const [input, setInput] = useState('');
-    const { tasks, isLoading, error, handleAddTask } = useTasks();
+    const { tasks, isLoading, error, handleAddTask, handleDeleteTask } = useTasks();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value);
@@ -88,7 +88,7 @@ export default function TaskManager() {
                 {error && (
                     <p className="text-sm text-red-600 mb-3">Error: {error}</p>
                 )}
-                <TaskList tasks={tasks} />
+                <TaskList tasks={tasks} onDelete={handleDeleteTask} />
             </main>
         </div>
     );

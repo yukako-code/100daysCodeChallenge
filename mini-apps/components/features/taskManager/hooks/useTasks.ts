@@ -1,6 +1,6 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { Task, TaskPriority } from "../constants/type"
-import { initialTaskState, taskReducers } from "../reducers/taskReducers";
+import { initialTaskState, initTaskState, taskReducers } from "../reducers/taskReducers";
 import { Status } from "../../../../store/types";
 
 type HooksReturnType = {
@@ -8,9 +8,10 @@ type HooksReturnType = {
     isLoading: boolean;
     error?: string;
     handleAddTask: (t: string) => void
+    handleDeleteTask: (id: string) => void;
 }
 export const useTasks = (): HooksReturnType => {
-    const [state, dispatch] = useReducer(taskReducers, initialTaskState);
+    const [state, dispatch] = useReducer(taskReducers, initialTaskState, initTaskState);
 
     const handleAddTask = (newTask: string) => {
         dispatch({ type: "SET_STATUS", payload: Status.Loading });
@@ -20,8 +21,6 @@ export const useTasks = (): HooksReturnType => {
             dispatch({ type: "SET_ERROR", payload: "Task title cannot be empty." });
             return
         }
-        // dispatch loading
-        dispatch({ type: "SET_", payload: true });
         const tempNewTask: Task = {
             id: crypto.randomUUID(),
             title: newTask,
@@ -33,11 +32,24 @@ export const useTasks = (): HooksReturnType => {
         dispatch({ type: "RESET_GENERAL_STATE" });
 
     }
+
+    const handleDeleteTask = (id: string) => {
+        dispatch({ type: "SET_STATUS", payload: Status.Loading });
+        dispatch({ type: "DELETE_TASK", payload: id });
+        dispatch({ type: "RESET_GENERAL_STATE" });
+    }
+
+    useEffect(() => {
+        // Watch for changes and update localStorage
+        localStorage.setItem("tasks", JSON.stringify(state.tasks));
+    }, [state.tasks])
+
     return {
         tasks: state.tasks,
         isLoading: state.status === Status.Loading,
         error: state.status === Status.Error && state.error,
-        handleAddTask
+        handleAddTask,
+        handleDeleteTask
     }
 
 }

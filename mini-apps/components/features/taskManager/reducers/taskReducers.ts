@@ -2,6 +2,7 @@ import { Status } from "../../../../store/types";
 import { Task, TaskPriority } from "../constants/type";
 import { GeneralState, GeneralAction } from "@store/types";
 
+
 const MOCK_TASKS: Array<Task> = [
     {
         id: 'random-id-1',
@@ -25,16 +26,45 @@ type TaskState = GeneralState & {
     tasks: Array<Task>;
 }
 
-type TaskAction = GeneralAction & (
+type TaskAction = GeneralAction | (
     | { type: "ADD_TASK"; payload: Task }
     | { type: "DELETE_TASK"; payload: string }
+    | { type: 'FETCH_TASKS'; payload: Array<Task> }
 );
 
 export const initialTaskState: TaskState = {
-    tasks: [...MOCK_TASKS],
+    tasks: [],
     status: Status.Idle,
     error: undefined,
 };
+
+// 1. 初期化関数を定義
+export const initTaskState = (initial: typeof initialTaskState): typeof initialTaskState => {
+    if (typeof window === "undefined") return initial; // SSR するならお守り
+
+    const stored = localStorage.getItem("tasks");
+    if (stored) {
+        try {
+            const parsed = JSON.parse(stored) as Array<Task>;
+            return {
+                ...initial,
+                tasks: parsed,
+            };
+        } catch {
+            // パース失敗時は MOCK に fallback
+            return {
+                ...initial,
+                tasks: MOCK_TASKS,
+            };
+        }
+    }
+
+    return {
+        ...initial,
+        tasks: MOCK_TASKS,
+    };
+};
+
 
 export const taskReducers = (state: TaskState, action: TaskAction): TaskState => {
     switch (action.type) {
@@ -47,6 +77,11 @@ export const taskReducers = (state: TaskState, action: TaskAction): TaskState =>
             return {
                 ...state,
                 tasks: state.tasks.filter((t: Task) => t.id !== action.payload),
+            }
+        case "FETCH_TASKS":
+            return {
+                ...state,
+                tasks: action.payload,
             }
 
         case "SET_STATUS":
